@@ -69,10 +69,10 @@ public class Tpcc implements TpccConstants {
     private int[] failure2_sum = new int[TRANSACTION_COUNT];
 
 
-    private int[] prev_s = new int[5];
-    private int[] prev_l = new int[5];
+    private int[] prev_s = new int[TRANSACTION_COUNT];
+    private int[] prev_l = new int[TRANSACTION_COUNT];
 
-    private double[] max_rt = new double[5];
+    private double[] max_rt = new double[TRANSACTION_COUNT];
     private int port = 3306;
 
     private Properties properties;
@@ -110,7 +110,7 @@ public class Tpcc implements TpccConstants {
         activate_transaction = 1;
 
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < TRANSACTION_COUNT; i++) {
             success[i] = 0;
             late[i] = 0;
             retry[i] = 0;
@@ -300,9 +300,9 @@ public class Tpcc implements TpccConstants {
          */
 
         System.out.println("<Raw Results>");
-        for (int i = 0; i < TRANSACTION_COUNT; i++) {
+        for (int i = 0; i < TRANSACTION_NAME.length; i++) {
             System.out.printf("  |%s| sc:%d  lt:%d  rt:%d  fl:%d \n",
-                    TRANSACTION_NAME[i], success[i], late[i], retry[i], failure[i]);
+                    TRANSACTION_NAME[i%TRANSACTION_NAME.length], success[i], late[i], retry[i], failure[i]);
         }
         System.out.printf(" in %f sec.\n", actualTestTime / 1000.0f);
 
@@ -310,7 +310,7 @@ public class Tpcc implements TpccConstants {
         * Raw Results 2
         */
         System.out.println("<Raw Results2(sum ver.)>");
-        for (int i = 0; i < TRANSACTION_COUNT; i++) {
+        for (int i = 0; i < TRANSACTION_NAME.length; i++) {
             success2_sum[i] = 0;
             late2_sum[i] = 0;
             retry2_sum[i] = 0;
@@ -322,9 +322,9 @@ public class Tpcc implements TpccConstants {
                 failure2_sum[i] += failure2[i][k];
             }
         }
-        for (int i = 0; i < TRANSACTION_COUNT; i++) {
+        for (int i = 0; i < TRANSACTION_NAME.length; i++) {
             System.out.printf("  |%s| sc:%d  lt:%d  rt:%d  fl:%d \n",
-                    TRANSACTION_NAME[i], success2_sum[i], late2_sum[i], retry2_sum[i], failure2_sum[i]);
+                    TRANSACTION_NAME[i%TRANSACTION_NAME.length], success2_sum[i], late2_sum[i], retry2_sum[i], failure2_sum[i]);
         }
 
         System.out.println("<Constraint Check> (all must be [OK])\n [transaction percentage]");
@@ -382,7 +382,7 @@ public class Tpcc implements TpccConstants {
         double total = 0.0;
         for (j = 0; j < TRANSACTION_COUNT; j++) {
             total = total + success[j] + late[j];
-            System.out.println(" " + TRANSACTION_NAME[j] + " Total: " + (success[j] + late[j]));
+            System.out.println(" " + TRANSACTION_NAME[j%TRANSACTION_NAME.length] + " Total: " + (success[j] + late[j]));
         }
 
         float tpcm = (success[0] + late[0]) * 60000f / actualTestTime;
